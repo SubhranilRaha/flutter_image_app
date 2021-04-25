@@ -8,8 +8,9 @@ class WallpaperModel {
       {this.photographer, this.photographer_id, this.photographer_url, this.src});
 
   factory WallpaperModel.fromMap(Map<String, dynamic> jsonData){
+    final SrcModel scr = SrcModel.fromMap(jsonData['src']);
     return WallpaperModel(
-      src: jsonData['src'],
+      src: scr,
       photographer: jsonData['photographer'],
       photographer_id: jsonData[' photographer_id'],
       photographer_url: jsonData['photographer_url']

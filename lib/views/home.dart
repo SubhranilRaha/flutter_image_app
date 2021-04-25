@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:wallpaperhubapp/data/data.dart';
 import 'package:wallpaperhubapp/model/categories_model.dart';
 import 'package:wallpaperhubapp/model/wallpaper_model.dart';
+import 'package:wallpaperhubapp/views/categorie.dart';
+import 'package:wallpaperhubapp/views/image_view.dart';
+import 'package:wallpaperhubapp/views/search.dart';
 import 'package:wallpaperhubapp/widgets/widget.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,10 +19,11 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<CategoriesModel> categories = [];
   List<WallpaperModel> wallpapers = [];
+  TextEditingController searchController = new TextEditingController();
 
   getTrendingWallpapers() async {
 
-    Uri uri=Uri.parse('https://api.pexels.com/v1/curated?per_page=15&page=1');
+    Uri uri=Uri.parse('https://api.pexels.com/v1/curated?per_page=80&page=1');
    var response =await http.get(uri,
    headers: {
      'authorization' : apiKey});
@@ -48,6 +52,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Color(0xfff5f8fd),
         title: brandName(),
         elevation: 0.0,
       ),
@@ -55,6 +60,28 @@ class _HomeState extends State<Home> {
         child: Container(
           child: Column(
             children: [
+          Container(
+            margin: EdgeInsets.all(10),
+            child: Center(
+            child:   RichText(
+
+            text: TextSpan(
+
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+
+            children: <TextSpan>[
+
+              TextSpan(text: 'by', style: TextStyle(color: Colors.blue)),
+
+              TextSpan(text: ' Subhranil', style: TextStyle(color: Colors.black87)),
+
+            ],
+
+        ),
+
+      ),
+    ),
+          ),
               Container(
                 decoration: BoxDecoration(
                   color: Color(0xfff5f8fd),
@@ -65,13 +92,21 @@ class _HomeState extends State<Home> {
                 child: Row(children: [
                   Expanded(
                     child: TextField(
+                      controller: searchController,
                       decoration: InputDecoration(
-                        hintText: "search wallpaper",
+                        hintText: "search image",
                         border: InputBorder.none,
                       ),
                     ),
                   ),
-                  Icon(Icons.search)
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => Search(
+                            searchQuery: searchController.text,
+                            )
+                        ));
+                      },child: Icon(Icons.search))
                 ],
                 ),
               ),
@@ -106,17 +141,24 @@ class CategoriesTile extends StatelessWidget {
   CategoriesTile({@required this.title,@required this.imgUrl});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4),
-      child: Stack(children: [
-        ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.network(imgUrl!, height: 50, width: 100, fit: BoxFit.cover,)),
-        Container(
-          height: 50, width: 100,
-          alignment: Alignment.center,
-          child: Text(title!,style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),),)
-      ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context,MaterialPageRoute(builder: (context) => Categorie(
+          categorieName: title,
+        )));
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 4),
+        child: Stack(children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(imgUrl!, height: 50, width: 100, fit: BoxFit.cover,)),
+          Container(
+            height: 50, width: 100,
+            alignment: Alignment.center,
+            child: Text(title!,style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),),)
+        ],
+        ),
       ),
     );
   }
